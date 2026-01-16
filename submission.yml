@@ -1,0 +1,28 @@
+version: "1.0"
+name: Payment Orchestrator
+
+setup:
+  - command: npm install
+    working_dir: backend
+  - command: npm install
+    working_dir: frontend
+  - command: npm install
+    working_dir: checkout-page
+
+start:
+  - command: docker-compose up -d --build
+    timeout: 300
+
+verify:
+  - command: curl -f http://localhost:8000/api/v1/health
+    retries: 5
+    delay: 5
+  - command: curl -f http://localhost:8000/api/v1/test/jobs/status
+    retries: 5
+    delay: 5
+  - command: curl -f http://localhost:3000
+    retries: 3
+    delay: 2
+
+shutdown:
+  - command: docker-compose down -v
