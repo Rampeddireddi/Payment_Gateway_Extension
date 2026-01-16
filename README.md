@@ -63,9 +63,6 @@ The entire application stack is containerized.
 3. **Verify Status:**
    Ensure the following 6 containers are active: `api`, `worker`, `db`, `redis`, `dashboard`, and `checkout`.
 
-## 🌐 Services Map
-` Service ` URL ` Description `
-`---------`-----`-------------`
 ` **Backend API** ` `http://localhost:8000` ` The core REST API handling business logic. `
 ` **Merchant Dashboard** ` `http://localhost:3000` ` Administration interface for merchants. `
 ` **Customer Checkout** ` `http://localhost:3001` ` The client-facing payment interface. `
