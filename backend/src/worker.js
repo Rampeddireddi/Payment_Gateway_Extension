@@ -7,7 +7,6 @@ require('dotenv').config();
 
 console.log("Worker Script Loaded - v3 (Final)");
 
-// --- Helper: Enqueue Webhook ---
 const enqueueWebhook = async (merchantId, event, data) => {
     try {
         const merchantRes = await pool.query('SELECT webhook_url FROM merchants WHERE id = $1', [merchantId]);
@@ -42,7 +41,6 @@ const enqueueWebhook = async (merchantId, event, data) => {
     }
 };
 
-// --- WORKER 1: Process Payment ---
 new Worker('payment-queue', async (job) => {
     const { paymentId } = job.data;
     console.log(`[PaymentWorker] START Processing: ${paymentId}`);
@@ -52,7 +50,7 @@ new Worker('payment-queue', async (job) => {
         const payment = res.rows[0];
         if (!payment) return;
 
-        // Simulate Delay
+       
         const isTestMode = process.env.TEST_MODE === 'true';
         const delay = isTestMode 
             ? (parseInt(process.env.TEST_PROCESSING_DELAY) || 1000) 
@@ -60,7 +58,7 @@ new Worker('payment-queue', async (job) => {
         
         await new Promise(r => setTimeout(r, delay));
 
-        // Determine Outcome
+       
         let success;
         if (isTestMode && process.env.TEST_PAYMENT_SUCCESS) {
             success = process.env.TEST_PAYMENT_SUCCESS === 'true';
@@ -97,7 +95,6 @@ new Worker('payment-queue', async (job) => {
 
 }, { connection });
 
-// --- WORKER 2: Process Refund ---
 new Worker('refund-queue', async (job) => {
     console.log(`[RefundWorker] Processing Refund: ${job.data.refundId}`);
     try {
@@ -109,7 +106,6 @@ new Worker('refund-queue', async (job) => {
     }
 }, { connection });
 
-// --- WORKER 3: Deliver Webhook ---
 new Worker('webhook-queue', async (job) => {
     console.log(`[WebhookWorker] Delivering Log ID: ${job.data.logId}`);
     try {
@@ -143,7 +139,6 @@ new Worker('webhook-queue', async (job) => {
             status = 'pending';
         }
 
-        // --- RETRY LOGIC (TEST MODE AWARE) ---
         let nextRetry = null;
         if (status !== 'success') {
             if (attempts >= 5) {
@@ -151,7 +146,6 @@ new Worker('webhook-queue', async (job) => {
             } else {
                 const isTestRetries = process.env.WEBHOOK_RETRY_INTERVALS_TEST === 'true';
                 
-                // 5s, 10s, 15s, 20s for TEST. 1m, 5m, 30m, 2h for PROD.
                 const delays = isTestRetries 
                     ? [0, 5000, 10000, 15000, 20000] 
                     : [0, 60000, 300000, 1800000, 7200000];
