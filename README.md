@@ -53,7 +53,7 @@ The entire application stack is containerized.
 1. **Clone the repository:**
    `bash
    git clone https://github.com/Rampeddireddi/Payment_Gateway_Extension
-   cd payment-orchestrator
+   cd Payment_Gateway_Extension
    `
 
 2. **Start the services:**
