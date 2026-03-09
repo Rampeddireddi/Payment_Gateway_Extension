@@ -5,7 +5,7 @@ The project adopts an **Event-Driven Architecture** to decouple request handling
 
 ## System Diagram
 
-`mermaid
+```mermaid
 graph TD
     User[Customer] -->|1. Pays| Checkout[Checkout UI :3001]
     Checkout -->|2. POST Payment| API[API Service :8000]
@@ -21,7 +21,7 @@ graph TD
     Worker -.->|8. Trigger Webhook| Merchant[Merchant Server]
     
     Dashboard[Dashboard :3000] -->|9. Poll Status| API
-`
+```
 
 ## Core Components
 
