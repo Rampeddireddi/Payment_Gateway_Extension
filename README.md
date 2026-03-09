@@ -18,6 +18,27 @@ Merchants can onboard, create orders, accept payments through a hosted checkout,
 
 ---
 
+## System Diagram
+
+```mermaid
+graph TD
+    User[Customer] -->|1. Pays| Checkout["Checkout UI 3001"]
+    Checkout -->|2. POST Payment| API["API Service 8000"]
+    
+    API -->|3. Create Record Pending| DB[(PostgreSQL)]
+    API -->|4. Push Job| Redis[(Redis Queue)]
+    
+    Redis -->|5. Pick up Job| Worker[Worker Service]
+    
+    Worker -->|6. Simulate Bank Delay| Worker
+    Worker -->|7. Update Status| DB
+    
+    Worker -.->|8. Trigger Webhook| Merchant[Merchant Server]
+    
+    Dashboard["Dashboard 3000"] -->|9. Poll Status| API
+```
+
+
 ##  What This Project Demonstrates
 - **Merchant Dashboard**
   - Merchant login + API credential management
